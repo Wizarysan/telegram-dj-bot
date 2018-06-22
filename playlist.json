@@ -1,0 +1,18 @@
+[
+    {
+        "mode": "url",
+        "channel": "@wiztest",
+        "time": "2018.06.21 14:35",
+        "url": "https://www.sample-videos.com/audio/mp3/crowd-cheering.mp3",
+        "image": "https://pp.userapi.com/c844417/v844417377/8356e/X0aPzVPQxaI.jpg",
+        "caption": "Test *Tekina*"
+    },
+    {
+        "mode": "file",
+        "channel": "@wiztest",
+        "time": "2018.06.22 14:22",
+        "file": "Camellia - crystallized",
+        "image": "Camellia - crystallized.jpg",
+        "caption": "*Camellia* - crystallized"
+    }
+]
