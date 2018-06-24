@@ -8,6 +8,15 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.date import DateTrigger
 
 
+def tele_post(settings, method, data, files=None):
+    requests.post(
+        '{url_base}{token}/{method}'.format(method=method, **settings),
+        data=data,
+        proxies=settings['proxies'],
+        files=files
+    )
+
+
 def send_file(settings, item):
     requests.post(
         '{0}{1}/sendPhoto?chat_id={2}'.format(
