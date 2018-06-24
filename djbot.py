@@ -62,8 +62,8 @@ def schedulePlaylist(settings, playlist, scheduler):
 
 
 def main():
-    demo_playlist = json.load(open('playlist.json', 'r'))
-    settings = json.load(open('settings.json', 'r'))
+    demo_playlist = json.load(open('playlist.json'))
+    settings = json.load(open('settings.json'))
 
     sched = BackgroundScheduler()
 
