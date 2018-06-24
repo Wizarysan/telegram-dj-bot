@@ -15,14 +15,14 @@ sched = BackgroundScheduler()
 def sendPost(**item):
     if(item['mode'] == 'file'):
         music = {
-            'audio': open('music/{0}.mp3'.format(item['file']), 'rb')
+            'audio': open('music/{0}'.format(item['file']), 'rb')
         }
         image = {
             'photo': open('images/{0}'.format(item['image']), 'rb')
         }
+        print(music)
         requests.post('{0}{1}/sendPhoto?chat_id={2}'.format(settings['url_base'], settings['token'], item['channel']), proxies=settings['proxies'], files=image)
         r = requests.post('{0}{1}/sendAudio?chat_id={2}&parse_mode=Markdown&caption={3}'.format(settings['url_base'], settings['token'], item['channel'], item['caption']), proxies=settings['proxies'], files=music)
-        #print Success message
     else:
         requests.post('{0}{1}/sendPhoto?chat_id={2}&photo={3}'.format(settings['url_base'], settings['token'], item['channel'], item['image']), proxies=settings['proxies'])
         r = requests.post('{0}{1}/sendAudio?chat_id={2}&parse_mode=Markdown&caption={3}&audio={4}'.format(settings['url_base'], settings['token'], item['channel'], item['caption'], item['url']), proxies=settings['proxies'])
@@ -34,6 +34,7 @@ def schedulePlaylist(playlist, scheduler):
     for index, item in enumerate(playlist, start=1):
         date_trigger = DateTrigger(datetime.strptime(item['time'], '%Y.%m.%d %H:%M'))
         scheduler.add_job(sendPost, date_trigger, kwargs=item)
+        print('Job created at ', date_trigger)
         # if index == lstindex:
         #     scheduler.add_job(scheduler.shutdown, 'date', run_date=end_datetime)
     scheduler.start()
