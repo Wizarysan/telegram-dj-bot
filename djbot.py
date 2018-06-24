@@ -9,7 +9,7 @@ from apscheduler.triggers.date import DateTrigger
 
 
 def tele_post(settings, method, data, files=None):
-    requests.post(
+    return requests.post(
         '{url_base}{token}/{method}'.format(method=method, **settings),
         data=data,
         proxies=settings['proxies'],
@@ -18,39 +18,29 @@ def tele_post(settings, method, data, files=None):
 
 
 def send_file(settings, item):
-    requests.post(
-        '{0}{1}/sendPhoto?chat_id={2}'.format(
-            settings['url_base'], settings['token'], item['channel']
-        ),
-        proxies=settings['proxies'],
-        files={'photo': open('images/{0}'.format(item['image']), 'rb')}
-    )
-    r = requests.post(
-        '{0}{1}/sendAudio?chat_id={2}&parse_mode=Markdown&caption={3}'.format(
-            settings['url_base'], settings['token'], item['channel'], item['caption']
-        ),
-        proxies=settings['proxies'],
-        files={'audio': open('music/{0}'.format(item['file']), 'rb')}
-    )
-    print(r.text)
-    return r.text
+    tele_post(settings,
+              'sendPhoto',
+              data={'chat_id': item['channel']},
+              files={'photo': open('images/{0}'.format(item['image']), 'rb')})
+    tele_post(settings,
+              'sendAudio',
+              data={'chat_id':    item['channel'],
+                    'parse_mode': 'Markdown',
+                    'caption':    item['caption']},
+              files={'audio': open('music/{0}'.format(item['file']), 'rb')})
 
 
 def send_url(settings, item):
-    requests.post(
-        '{0}{1}/sendPhoto?chat_id={2}&photo={3}'.format(
-            settings['url_base'], settings['token'], item['channel'], item['image']
-        ),
-        proxies=settings['proxies']
-    )
-    r = requests.post(
-        '{0}{1}/sendAudio?chat_id={2}&parse_mode=Markdown&caption={3}&audio={4}'.format(
-            settings['url_base'], settings['token'], item['channel'], item['caption'], item['url']
-        ),
-        proxies=settings['proxies']
-    )
-    print(r.text)
-    return r.text
+    tele_post(settings,
+              'sendPhoto',
+              data={'chat_id': item['channel'],
+                    'photo':   item['image']})
+    tele_post(settings,
+              'sendAudio',
+              data={'chat_id':    item['channel'],
+                    'parse_mode': 'Markdown',
+                    'caption':    item['caption']
+                    'audio':      item['url']})
 
 
 def sendPost(settings, item):
