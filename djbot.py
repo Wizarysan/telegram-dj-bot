@@ -12,22 +12,34 @@ settings = json.load(open('settings.json', 'r'))
 
 sched = BackgroundScheduler()
 
-def sendPost(**item):
-    if(item['mode'] == 'file'):
-        music = {
-            'audio': open('music/{0}'.format(item['file']), 'rb')
-        }
-        image = {
-            'photo': open('images/{0}'.format(item['image']), 'rb')
-        }
-        print(music)
-        requests.post('{0}{1}/sendPhoto?chat_id={2}'.format(settings['url_base'], settings['token'], item['channel']), proxies=settings['proxies'], files=image)
-        r = requests.post('{0}{1}/sendAudio?chat_id={2}&parse_mode=Markdown&caption={3}'.format(settings['url_base'], settings['token'], item['channel'], item['caption']), proxies=settings['proxies'], files=music)
-    else:
-        requests.post('{0}{1}/sendPhoto?chat_id={2}&photo={3}'.format(settings['url_base'], settings['token'], item['channel'], item['image']), proxies=settings['proxies'])
-        r = requests.post('{0}{1}/sendAudio?chat_id={2}&parse_mode=Markdown&caption={3}&audio={4}'.format(settings['url_base'], settings['token'], item['channel'], item['caption'], item['url']), proxies=settings['proxies'])
+
+def send_file(**item):
+    music = {
+        'audio': open('music/{0}'.format(item['file']), 'rb')
+    }
+    image = {
+        'photo': open('images/{0}'.format(item['image']), 'rb')
+    }
+    print(music)
+    requests.post('{0}{1}/sendPhoto?chat_id={2}'.format(settings['url_base'], settings['token'], item['channel']), proxies=settings['proxies'], files=image)
+    r = requests.post('{0}{1}/sendAudio?chat_id={2}&parse_mode=Markdown&caption={3}'.format(settings['url_base'], settings['token'], item['channel'], item['caption']), proxies=settings['proxies'], files=music)
     print(r.text)
     return r.text
+
+
+def send_url(**item):
+    requests.post('{0}{1}/sendPhoto?chat_id={2}&photo={3}'.format(settings['url_base'], settings['token'], item['channel'], item['image']), proxies=settings['proxies'])
+    r = requests.post('{0}{1}/sendAudio?chat_id={2}&parse_mode=Markdown&caption={3}&audio={4}'.format(settings['url_base'], settings['token'], item['channel'], item['caption'], item['url']), proxies=settings['proxies'])
+    print(r.text)
+    return r.text
+
+
+def sendPost(**item):
+    if(item['mode'] == 'file'):
+        return send_file(**item)
+    else:
+        return send_file(**item)
+
 
 def schedulePlaylist(playlist, scheduler):
     #lstindex = len(playlist)
