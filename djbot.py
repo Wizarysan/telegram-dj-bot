@@ -39,7 +39,7 @@ def send_url(settings, item):
               'sendAudio',
               data={'chat_id':    item['channel'],
                     'parse_mode': 'Markdown',
-                    'caption':    item['caption']
+                    'caption':    item['caption'],
                     'audio':      item['url']})
 
 
@@ -47,14 +47,14 @@ def sendPost(settings, item):
     if(item['mode'] == 'file'):
         return send_file(settings, item)
     else:
-        return send_file(settings, item)
+        return send_url(settings, item)
 
 
 def schedulePlaylist(settings, playlist, scheduler):
     #lstindex = len(playlist)
     for index, item in enumerate(playlist, start=1):
         date_trigger = DateTrigger(datetime.strptime(item['time'], '%Y.%m.%d %H:%M'))
-        scheduler.add_job(lambda item: sendPost(settings, item), date_trigger, kwargs=item)
+        scheduler.add_job(lambda item: sendPost(settings, item), date_trigger, args=[item])
         print('Job created at ', date_trigger)
         # if index == lstindex:
         #     scheduler.add_job(scheduler.shutdown, 'date', run_date=end_datetime)
