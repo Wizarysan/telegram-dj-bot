@@ -44,10 +44,12 @@ def sendUrl(settings, item):
 
 
 def sendPost(settings, item):
-    if(item['mode'] == 'file'):
+    if item['mode'] == 'file':
         r = sendFile(settings, item)
-    else:
+    elif item['mode'] == 'url':
         r = sendUrl(settings, item)
+    else:
+        raise ValueError('Unknown mode: {}'.format(item['mode']))
     print(r.text)
     return r.text
 
