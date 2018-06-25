@@ -22,12 +22,12 @@ def send_file(settings, item):
               'sendPhoto',
               data={'chat_id': item['channel']},
               files={'photo': open('images/{0}'.format(item['image']), 'rb')})
-    tele_post(settings,
-              'sendAudio',
-              data={'chat_id':    item['channel'],
-                    'parse_mode': 'Markdown',
-                    'caption':    item['caption']},
-              files={'audio': open('music/{0}'.format(item['file']), 'rb')})
+    return tele_post(settings,
+                     'sendAudio',
+                     data={'chat_id':    item['channel'],
+                           'parse_mode': 'Markdown',
+                           'caption':    item['caption']},
+                     files={'audio': open('music/{0}'.format(item['file']), 'rb')})
 
 
 def send_url(settings, item):
@@ -35,19 +35,21 @@ def send_url(settings, item):
               'sendPhoto',
               data={'chat_id': item['channel'],
                     'photo':   item['image']})
-    tele_post(settings,
-              'sendAudio',
-              data={'chat_id':    item['channel'],
-                    'parse_mode': 'Markdown',
-                    'caption':    item['caption'],
-                    'audio':      item['url']})
+    return tele_post(settings,
+                     'sendAudio',
+                     data={'chat_id':    item['channel'],
+                           'parse_mode': 'Markdown',
+                           'caption':    item['caption'],
+                           'audio':      item['url']})
 
 
 def sendPost(settings, item):
     if(item['mode'] == 'file'):
-        return send_file(settings, item)
+        r = send_file(settings, item)
     else:
-        return send_url(settings, item)
+        r = send_url(settings, item)
+    print(r.text)
+    return r.text
 
 
 def schedulePlaylist(settings, playlist, scheduler):
