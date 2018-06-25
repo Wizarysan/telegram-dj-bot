@@ -8,7 +8,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.date import DateTrigger
 
 
-def tele_post(settings, method, data, files=None):
+def telePost(settings, method, data, files=None):
     return requests.post(
         '{url_base}{token}/{method}'.format(method=method, **settings),
         data=data,
@@ -17,12 +17,12 @@ def tele_post(settings, method, data, files=None):
     )
 
 
-def send_file(settings, item):
-    tele_post(settings,
+def sendFile(settings, item):
+    telePost(settings,
               'sendPhoto',
               data={'chat_id': item['channel']},
               files={'photo': open('images/{0}'.format(item['image']), 'rb')})
-    return tele_post(settings,
+    return telePost(settings,
                      'sendAudio',
                      data={'chat_id':    item['channel'],
                            'parse_mode': 'Markdown',
@@ -30,12 +30,12 @@ def send_file(settings, item):
                      files={'audio': open('music/{0}'.format(item['file']), 'rb')})
 
 
-def send_url(settings, item):
-    tele_post(settings,
+def sendUrl(settings, item):
+    telePost(settings,
               'sendPhoto',
               data={'chat_id': item['channel'],
                     'photo':   item['image']})
-    return tele_post(settings,
+    return telePost(settings,
                      'sendAudio',
                      data={'chat_id':    item['channel'],
                            'parse_mode': 'Markdown',
@@ -45,9 +45,9 @@ def send_url(settings, item):
 
 def sendPost(settings, item):
     if(item['mode'] == 'file'):
-        r = send_file(settings, item)
+        r = sendFile(settings, item)
     else:
-        r = send_url(settings, item)
+        r = sendUrl(settings, item)
     print(r.text)
     return r.text
 
