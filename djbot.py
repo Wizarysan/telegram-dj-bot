@@ -18,29 +18,43 @@ def telePost(settings, method, data, files=None):
 
 
 def sendFile(settings, item):
-    telePost(settings,
-              'sendPhoto',
-              data={'chat_id': item['channel']},
-              files={'photo': open('images/{0}'.format(item['image']), 'rb')})
-    return telePost(settings,
-                     'sendAudio',
-                     data={'chat_id':    item['channel'],
-                           'parse_mode': 'Markdown',
-                           'caption':    item['caption']},
-                     files={'audio': open('music/{0}'.format(item['file']), 'rb')})
+    telePost(
+        settings,
+        'sendPhoto',
+        data={'chat_id': item['channel']},
+        files={'photo': open('images/{0}'.format(item['image']), 'rb')}
+    )
+    return telePost(
+        settings,
+        'sendAudio',
+        data={
+            'chat_id':    item['channel'],
+            'parse_mode': 'Markdown',
+            'caption':    item['caption']
+        },
+        files={'audio': open('music/{0}'.format(item['file']), 'rb')}
+    )
 
 
 def sendUrl(settings, item):
-    telePost(settings,
-              'sendPhoto',
-              data={'chat_id': item['channel'],
-                    'photo':   item['image']})
-    return telePost(settings,
-                     'sendAudio',
-                     data={'chat_id':    item['channel'],
-                           'parse_mode': 'Markdown',
-                           'caption':    item['caption'],
-                           'audio':      item['url']})
+    telePost(
+        settings,
+        'sendPhoto',
+        data={
+            'chat_id': item['channel'],
+            'photo':   item['image']
+        }
+    )
+    return telePost(
+        settings,
+        'sendAudio',
+        data={
+            'chat_id':    item['channel'],
+            'parse_mode': 'Markdown',
+            'caption':    item['caption'],
+            'audio':      item['url']
+        }
+    )
 
 
 def sendPost(settings, item):
