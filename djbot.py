@@ -67,6 +67,13 @@ def sendPost(settings, item):
     print(r.text)
     return r.text
 
+def listenUpdates(settings, playlist, scheduler):
+    testingUpd = requests.get(
+        '{url_base}{token}/getUpdates?offset=-1&limit=1'.format(**settings),
+        proxies=settings['proxies']
+    )
+    print(testingUpd.content)
+    # schedulePlaylist(settings, demo_playlist, sched)
 
 def schedulePlaylist(settings, playlist, scheduler):
     #lstindex = len(playlist)
@@ -78,14 +85,13 @@ def schedulePlaylist(settings, playlist, scheduler):
         #     scheduler.add_job(scheduler.shutdown, 'date', run_date=end_datetime)
     scheduler.start()
 
-
 def main():
     demo_playlist = json.load(open('playlist.json'))
     settings = json.load(open('settings.json'))
 
     sched = BackgroundScheduler()
 
-    schedulePlaylist(settings, demo_playlist, sched)
+    listenUpdates(settings, demo_playlist, sched)
 
     try:
         # This is here to simulate application activity (which keeps the main thread alive).
