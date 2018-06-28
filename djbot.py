@@ -1,12 +1,17 @@
 # -*- coding: utf-8 -*-
 
 import requests
+import threading
 import json
 import time
 from datetime import datetime
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.date import DateTrigger
 
+def setInterval(func,time):
+    e = threading.Event()
+    while not e.wait(time):
+        func()
 
 def telePost(settings, method, data, files=None):
     return requests.post(
@@ -72,7 +77,12 @@ def listenUpdates(settings, playlist, scheduler):
         '{url_base}{token}/getUpdates?offset=-1&limit=1'.format(**settings),
         proxies=settings['proxies']
     )
-    print(testingUpd.content)
+    response = testingUpd.json()
+    fileType = response['result'][0]['message']['audio']['mime_type']
+    print(fileType)
+    if fileType == 'audio/mpeg' or fileType == 'audio/flac':
+        scheduler.shutdown(wait=False)
+        print('sched stopped')
     # schedulePlaylist(settings, demo_playlist, sched)
 
 def schedulePlaylist(settings, playlist, scheduler):
@@ -91,7 +101,9 @@ def main():
 
     sched = BackgroundScheduler()
 
-    listenUpdates(settings, demo_playlist, sched)
+    sched.add_job(listenUpdates, 'interval', seconds=10, args=[settings, demo_playlist, sched])
+    sched.start()
+    #listenUpdates(settings, demo_playlist, sched)
 
     try:
         # This is here to simulate application activity (which keeps the main thread alive).
