@@ -72,18 +72,38 @@ def sendPost(settings, item):
     print(r.text)
     return r.text
 
-def listenUpdates(settings, playlist, scheduler):
-    testingUpd = requests.get(
+def getUpdates(settings):
+    testing_upd = requests.get(
         '{url_base}{token}/getUpdates?offset=-1&limit=1'.format(**settings),
         proxies=settings['proxies']
     )
-    response = testingUpd.json()
+    return testing_upd.json()
+
+def listenUpdates(settings, playlist, scheduler):
+    response = getUpdates(settings)
+    print(response)
     fileType = response['result'][0]['message']['audio']['mime_type']
-    print(fileType)
     if fileType == 'audio/mpeg' or fileType == 'audio/flac':
         scheduler.shutdown(wait=False)
         print('sched stopped')
+        #listenImage(response['result'][0]['message'], settings)
     # schedulePlaylist(settings, demo_playlist, sched)
+
+def createTaskById(message, settings, scheduler):
+    response = getUpdates(settings)
+    if response['result'][0]['message']['photo']:
+        scheduler.shutdown(wait=False)
+        print(response['result'][0]['message']['photo'])
+    task = {
+        "url": message['audio']['file_id'],
+        "caption": "test Caption",
+    }
+
+def listenImage(message, settings):
+    #Try blocking scheduler for image
+    imageScheduler = BackgroundScheduler()
+    imageScheduler.add_job(createTaskById, 'interval', seconds=10, args=[message, settings, imageScheduler])
+    imageScheduler.start()
 
 def schedulePlaylist(settings, playlist, scheduler):
     #lstindex = len(playlist)
