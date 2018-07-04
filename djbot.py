@@ -86,21 +86,27 @@ def listenUpdates(settings, playlist, scheduler):
     if fileType == 'audio/mpeg' or fileType == 'audio/flac':
         scheduler.shutdown(wait=False)
         print('sched stopped')
-        #listenImage(response['result'][0]['message'], settings)
+        listenImage(response['result'][0]['message'], settings)
     # schedulePlaylist(settings, demo_playlist, sched)
 
 def createTaskById(message, settings, scheduler):
+    print('sched started')
     response = getUpdates(settings)
+    print(response)
     if response['result'][0]['message']['photo']:
-        scheduler.shutdown(wait=False)
         print(response['result'][0]['message']['photo'])
-    task = {
-        "url": message['audio']['file_id'],
-        "caption": "test Caption",
-    }
+        task = {
+            "mode": "url",
+            "url": message['audio']['file_id'],
+            "image": response['result'][0]['message']['photo'][-1]['file_id'],
+            "caption": "test Caption",
+        }
+        scheduler.shutdown(wait=False)
+        print('img sched stopped')
+        print(task)
+
 
 def listenImage(message, settings):
-    #Try blocking scheduler for image
     imageScheduler = BackgroundScheduler()
     imageScheduler.add_job(createTaskById, 'interval', seconds=10, args=[message, settings, imageScheduler])
     imageScheduler.start()
