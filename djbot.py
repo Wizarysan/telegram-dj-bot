@@ -79,7 +79,18 @@ def getUpdates(settings):
     )
     return testing_upd.json()
 
-def listenUpdates(settings, playlist, scheduler):
+def listenCreationStart(settings, playlist, scheduler):
+    response = getUpdates(settings)
+    messageText = response['result'][0]['message']['text']
+    print(messageText)
+    if 'add' in messageText:
+        print('string found')
+        scheduler.shutdown(wait=False)
+        audioScheduler = BackgroundScheduler()
+        audioScheduler.add_job(listenAudio, 'interval', seconds=10, args=[settings, playlist, audioScheduler])
+        audioScheduler.start()
+
+def listenAudio(settings, playlist, scheduler):
     response = getUpdates(settings)
     print(response)
     fileType = response['result'][0]['message']['audio']['mime_type']
@@ -127,7 +138,7 @@ def main():
 
     sched = BackgroundScheduler()
 
-    sched.add_job(listenUpdates, 'interval', seconds=10, args=[settings, demo_playlist, sched])
+    sched.add_job(listenCreationStart, 'interval', seconds=10, args=[settings, demo_playlist, sched])
     sched.start()
     #listenUpdates(settings, demo_playlist, sched)
 
