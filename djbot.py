@@ -21,7 +21,6 @@ def telePost(settings, method, data, files=None):
         files=files
     )
 
-
 def sendFile(settings, item):
     telePost(
         settings,
@@ -61,7 +60,6 @@ def sendUrl(settings, item):
         }
     )
 
-
 def sendPost(settings, item):
     if item['mode'] == 'file':
         r = sendFile(settings, item)
@@ -82,9 +80,13 @@ def getUpdates(settings):
 def listenCreationStart(settings, playlist, scheduler):
     response = getUpdates(settings)
     messageText = response['result'][0]['message']['text']
-    print(messageText)
+    print(response['result'][0]['message'])
     if 'add' in messageText:
-        print('string found')
+        telePost(
+            settings,
+            'sendMessage',
+            data={'chat_id': response['result'][0]['message']['chat']['id'], 'text': 'Give me audio please:'},
+        )
         scheduler.shutdown(wait=False)
         audioScheduler = BackgroundScheduler()
         audioScheduler.add_job(listenAudio, 'interval', seconds=10, args=[settings, playlist, audioScheduler])
@@ -96,7 +98,11 @@ def listenAudio(settings, playlist, scheduler):
     fileType = response['result'][0]['message']['audio']['mime_type']
     if fileType == 'audio/mpeg' or fileType == 'audio/flac':
         scheduler.shutdown(wait=False)
-        print('sched stopped')
+        telePost(
+            settings,
+            'sendMessage',
+            data={'chat_id': response['result'][0]['message']['chat']['id'], 'text': 'Give me cover image please:'},
+        )
         listenImage(response['result'][0]['message'], settings)
     # schedulePlaylist(settings, demo_playlist, sched)
 
@@ -113,7 +119,11 @@ def createTaskById(message, settings, scheduler):
             "caption": "test Caption",
         }
         scheduler.shutdown(wait=False)
-        print('img sched stopped')
+        telePost(
+            settings,
+            'sendMessage',
+            data={'chat_id': response['result'][0]['message']['chat']['id'], 'text': 'Task created'},
+        )
         print(task)
 
 
