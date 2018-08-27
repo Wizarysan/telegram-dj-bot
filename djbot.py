@@ -87,12 +87,20 @@ def listenCreationStart(settings, playlist, scheduler):
             'sendMessage',
             data={'chat_id': response['result'][0]['message']['chat']['id'], 'text': 'Give me audio please:'},
         )
+
+        messageList = messageText.split()
+        payload = {
+            'time': messageList[1] + ' ' + messageList[2],
+            'channel': messageList[3]
+        }
+        print(payload)
+
         scheduler.shutdown(wait=False)
         audioScheduler = BackgroundScheduler()
-        audioScheduler.add_job(listenAudio, 'interval', seconds=10, args=[settings, playlist, audioScheduler])
+        audioScheduler.add_job(listenAudio, 'interval', seconds=10, args=[settings, playlist, audioScheduler, payload])
         audioScheduler.start()
 
-def listenAudio(settings, playlist, scheduler):
+def listenAudio(settings, playlist, scheduler, payload):
     response = getUpdates(settings)
     print(response)
     fileType = response['result'][0]['message']['audio']['mime_type']
@@ -103,10 +111,10 @@ def listenAudio(settings, playlist, scheduler):
             'sendMessage',
             data={'chat_id': response['result'][0]['message']['chat']['id'], 'text': 'Give me cover image please:'},
         )
-        listenImage(response['result'][0]['message'], settings)
+        listenImage(response['result'][0]['message'], settings, payload)
     # schedulePlaylist(settings, demo_playlist, sched)
 
-def createTaskById(message, settings, scheduler):
+def createTaskById(message, settings, scheduler, payload):
     print('sched started')
     response = getUpdates(settings)
     print(response)
@@ -118,6 +126,9 @@ def createTaskById(message, settings, scheduler):
             "image": response['result'][0]['message']['photo'][-1]['file_id'],
             "caption": "test Caption",
         }
+
+        #Write task to playlist
+
         scheduler.shutdown(wait=False)
         telePost(
             settings,
@@ -127,9 +138,9 @@ def createTaskById(message, settings, scheduler):
         print(task)
 
 
-def listenImage(message, settings):
+def listenImage(message, settings, payload):
     imageScheduler = BackgroundScheduler()
-    imageScheduler.add_job(createTaskById, 'interval', seconds=10, args=[message, settings, imageScheduler])
+    imageScheduler.add_job(createTaskById, 'interval', seconds=10, args=[message, settings, imageScheduler, payload])
     imageScheduler.start()
 
 def schedulePlaylist(settings, playlist, scheduler):

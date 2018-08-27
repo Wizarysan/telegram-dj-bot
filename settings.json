@@ -2,6 +2,6 @@
 	"token": "BOT TOKEN HERE",
 	"url_base": "https://api.telegram.org/bot",
 	"proxies": {
-		  "https": "https://103.255.123.38:8080"
+		  "https": "https://201.174.52.55:21231"
 		}
 }
