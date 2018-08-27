@@ -80,7 +80,16 @@ def getUpdates(settings):
 def listenCreationStart(settings, playlist, scheduler):
     response = getUpdates(settings)
     messageText = response['result'][0]['message']['text']
-    print(response['result'][0]['message'])
+
+    if 'start' in messageText:
+        telePost(
+            settings,
+            'sendMessage',
+            data={'chat_id': response['result'][0]['message']['chat']['id'], 'text': 'Playlist started'},
+        )
+        scheduler.shutdown(wait=False)
+        schedulePlaylist(settings, playlist)
+
     if 'add' in messageText:
         telePost(
             settings,
@@ -93,7 +102,6 @@ def listenCreationStart(settings, playlist, scheduler):
             'time': messageList[1] + ' ' + messageList[2],
             'channel': messageList[3]
         }
-        print(payload)
 
         scheduler.shutdown(wait=False)
         audioScheduler = BackgroundScheduler()
@@ -111,21 +119,25 @@ def listenAudio(settings, playlist, scheduler, payload):
             'sendMessage',
             data={'chat_id': response['result'][0]['message']['chat']['id'], 'text': 'Give me cover image please:'},
         )
-        listenImage(response['result'][0]['message'], settings, payload)
+        listenImage(response['result'][0]['message'], settings, playlist, payload)
     # schedulePlaylist(settings, demo_playlist, sched)
 
-def createTaskById(message, settings, scheduler, payload):
+def createTaskById(message, settings, scheduler, playlist, payload):
     print('sched started')
     response = getUpdates(settings)
-    print(response)
     if response['result'][0]['message']['photo']:
         print(response['result'][0]['message']['photo'])
         task = {
             "mode": "url",
+            "time": payload['time'],
+            "channel": payload['channel'],
             "url": message['audio']['file_id'],
             "image": response['result'][0]['message']['photo'][-1]['file_id'],
             "caption": "test Caption",
         }
+        playlist.append(task)
+        with open('playlist.json', 'w') as outfile:
+            json.dump(playlist, outfile)
 
         #Write task to playlist
 
@@ -135,23 +147,26 @@ def createTaskById(message, settings, scheduler, payload):
             'sendMessage',
             data={'chat_id': response['result'][0]['message']['chat']['id'], 'text': 'Task created'},
         )
-        print(task)
+        main()
+
+        # Back to listening
 
 
-def listenImage(message, settings, payload):
+def listenImage(message, settings, playlist, payload):
     imageScheduler = BackgroundScheduler()
-    imageScheduler.add_job(createTaskById, 'interval', seconds=10, args=[message, settings, imageScheduler, payload])
+    imageScheduler.add_job(createTaskById, 'interval', seconds=10, args=[message, settings, imageScheduler, playlist, payload])
     imageScheduler.start()
 
-def schedulePlaylist(settings, playlist, scheduler):
+def schedulePlaylist(settings, playlist):
     #lstindex = len(playlist)
+    playlistScheduler = BackgroundScheduler()
     for index, item in enumerate(playlist, start=1):
         date_trigger = DateTrigger(datetime.strptime(item['time'], '%Y.%m.%d %H:%M'))
-        scheduler.add_job(lambda item: sendPost(settings, item), date_trigger, args=[item])
+        playlistScheduler.add_job(lambda item: sendPost(settings, item), date_trigger, args=[item])
         print('Job created at ', date_trigger)
         # if index == lstindex:
         #     scheduler.add_job(scheduler.shutdown, 'date', run_date=end_datetime)
-    scheduler.start()
+    playlistScheduler.start()
 
 def main():
     demo_playlist = json.load(open('playlist.json'))
