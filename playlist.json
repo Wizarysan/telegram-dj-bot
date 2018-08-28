@@ -1,1 +1,18 @@
-[{"channel": "@wiztest", "url": "https://www.sample-videos.com/audio/mp3/crowd-cheering.mp3", "caption": "Test *Tekina*", "time": "2018.06.21 14:35", "image": "https://pp.userapi.com/c844417/v844417377/8356e/X0aPzVPQxaI.jpg", "mode": "url"}, {"channel": "@wiztest", "caption": "*Camellia* - crystallized", "file": "Camellia - crystallized.mp3", "time": "2018.06.24 16:14", "image": "Camellia - crystallized.jpg", "mode": "file"}, {"channel": "@wiztest", "url": "CQADAgADawEAAq6jIEhLWFr1LT6t-QI", "caption": "test Caption", "time": "2018.08.27 15:36", "image": "AgADAgAD3KgxG66jIEhkv1cEX7GwbF9Oqw4ABIn0_d9ELWsSFjUFAAEC", "mode": "url"}, {"channel": "@wiztest", "url": "CQADAgADqwEAAq6jKEiEvUVunB0lXwI", "caption": "test Caption", "time": "2018.06.24 18:53", "image": "AgADAgADSKkxG66jKEgt7pvx_COG6ctmqw4ABAleNLUfvecxeTEFAAEC", "mode": "url"}]
+[
+    {
+        "image": "https://pp.userapi.com/c844417/v844417377/8356e/X0aPzVPQxaI.jpg",
+        "channel": "@wiztest",
+        "mode": "url",
+        "time": "2018.06.21 14:35",
+        "url": "https://www.sample-videos.com/audio/mp3/crowd-cheering.mp3",
+        "caption": "Test *Tekina*"
+    },
+    {
+        "image": "Camellia - crystallized.jpg",
+        "channel": "@wiztest",
+        "mode": "file",
+        "time": "2018.06.24 16:14",
+        "caption": "*Camellia* - crystallized",
+        "file": "Camellia - crystallized.mp3"
+    }
+]

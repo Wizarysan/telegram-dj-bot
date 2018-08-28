@@ -7,6 +7,9 @@ import time
 from datetime import datetime
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.date import DateTrigger
+from apscheduler.triggers.interval import IntervalTrigger
+
+commonTrigger = IntervalTrigger(seconds=10)
 
 def setInterval(func,time):
     e = threading.Event()
@@ -105,7 +108,7 @@ def listenCreationStart(settings, playlist, scheduler):
 
         scheduler.shutdown(wait=False)
         audioScheduler = BackgroundScheduler()
-        audioScheduler.add_job(listenAudio, 'interval', seconds=10, args=[settings, playlist, audioScheduler, payload])
+        audioScheduler.add_job(listenAudio, trigger=commonTrigger, args=[settings, playlist, audioScheduler, payload])
         audioScheduler.start()
 
 def listenAudio(settings, playlist, scheduler, payload):
@@ -126,20 +129,18 @@ def createTaskById(message, settings, scheduler, playlist, payload):
     print('sched started')
     response = getUpdates(settings)
     if response['result'][0]['message']['photo']:
-        print(response['result'][0]['message']['photo'])
+        print(response['result'][0]['message'])
         task = {
             "mode": "url",
             "time": payload['time'],
             "channel": payload['channel'],
             "url": message['audio']['file_id'],
             "image": response['result'][0]['message']['photo'][-1]['file_id'],
-            "caption": "test Caption",
+            "caption": response['result'][0]['message']['caption'],
         }
         playlist.append(task)
         with open('playlist.json', 'w') as outfile:
-            json.dump(playlist, outfile)
-
-        #Write task to playlist
+            json.dump(playlist, outfile, indent=4)
 
         scheduler.shutdown(wait=False)
         telePost(
@@ -149,12 +150,9 @@ def createTaskById(message, settings, scheduler, playlist, payload):
         )
         main()
 
-        # Back to listening
-
-
 def listenImage(message, settings, playlist, payload):
     imageScheduler = BackgroundScheduler()
-    imageScheduler.add_job(createTaskById, 'interval', seconds=10, args=[message, settings, imageScheduler, playlist, payload])
+    imageScheduler.add_job(createTaskById, trigger=commonTrigger, args=[message, settings, imageScheduler, playlist, payload])
     imageScheduler.start()
 
 def schedulePlaylist(settings, playlist):
@@ -174,7 +172,7 @@ def main():
 
     sched = BackgroundScheduler()
 
-    sched.add_job(listenCreationStart, 'interval', seconds=10, args=[settings, demo_playlist, sched])
+    sched.add_job(listenCreationStart, trigger=commonTrigger, args=[settings, demo_playlist, sched])
     sched.start()
     #listenUpdates(settings, demo_playlist, sched)
 
