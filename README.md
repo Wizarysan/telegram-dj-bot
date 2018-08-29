@@ -23,7 +23,7 @@ Caption uses Markdown language
 When you finish adding your songs write **start** to schedule your playlist
 You always can view and edit playlist directly:
 
-####Edit playlist directly:
+#### Edit playlist directly:
 
 Bot loads songs from playlist.json where
 
