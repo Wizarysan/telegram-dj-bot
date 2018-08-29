@@ -6,21 +6,21 @@ Python 3, apscheduler, requests
 
 ### Usage
 
-In settings.json enter bot token provided by BotFather
+In settings.json enter bot token provided by BotFather<br />
 Edit or remove proxy if necessary
 
-Run djbot.exe from dist folder
-Open your bot in Telegram and send message
-**add YYYY.MM.DD HH:MM @channel**
-For example:
-_add 2018.08.28 13:38 @wiztest_
+Run djbot.exe from dist folder<br />
+Open your bot in Telegram and send message<br />
+**add YYYY.MM.DD HH:MM @channel**<br />
+For example:<br />
+_add 2018.08.28 13:38 @wiztest_<br />
 
-Then you will be asked for sound file, drag and drop it to bot
-After successful uploading you will be asked for cover image, drop it to as photo
-and **add some caption** (it's necessary for now) describing your post
+Then you will be asked for sound file, drag and drop it to bot<br />
+After successful uploading you will be asked for cover image, drop it to as photo<br />
+and **add some caption** (it's necessary for now) describing your post <br />
 Caption uses Markdown language
 
-When you finish adding your songs write **start** to schedule your playlist
+When you finish adding your songs write **start** to schedule your playlist<br />
 You always can view and edit playlist directly:
 
 #### Edit playlist directly:
