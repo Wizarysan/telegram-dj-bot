@@ -113,7 +113,6 @@ def listenCreationStart(settings, playlist, scheduler):
 
 def listenAudio(settings, playlist, scheduler, payload):
     response = getUpdates(settings)
-    print(response)
     fileType = response['result'][0]['message']['audio']['mime_type']
     if fileType == 'audio/mpeg' or fileType == 'audio/flac':
         scheduler.shutdown(wait=False)
@@ -123,13 +122,11 @@ def listenAudio(settings, playlist, scheduler, payload):
             data={'chat_id': response['result'][0]['message']['chat']['id'], 'text': 'Give me cover image please:'},
         )
         listenImage(response['result'][0]['message'], settings, playlist, payload)
-    # schedulePlaylist(settings, demo_playlist, sched)
 
 def createTaskById(message, settings, scheduler, playlist, payload):
     print('sched started')
     response = getUpdates(settings)
     if response['result'][0]['message']['photo']:
-        print(response['result'][0]['message'])
         task = {
             "mode": "url",
             "time": payload['time'],
@@ -156,14 +153,11 @@ def listenImage(message, settings, playlist, payload):
     imageScheduler.start()
 
 def schedulePlaylist(settings, playlist):
-    #lstindex = len(playlist)
     playlistScheduler = BackgroundScheduler()
     for index, item in enumerate(playlist, start=1):
         date_trigger = DateTrigger(datetime.strptime(item['time'], '%Y.%m.%d %H:%M'))
         playlistScheduler.add_job(lambda item: sendPost(settings, item), date_trigger, args=[item])
         print('Job created at ', date_trigger)
-        # if index == lstindex:
-        #     scheduler.add_job(scheduler.shutdown, 'date', run_date=end_datetime)
     playlistScheduler.start()
 
 def main():
@@ -174,7 +168,6 @@ def main():
 
     sched.add_job(listenCreationStart, trigger=commonTrigger, args=[settings, demo_playlist, sched])
     sched.start()
-    #listenUpdates(settings, demo_playlist, sched)
 
     try:
         # This is here to simulate application activity (which keeps the main thread alive).
